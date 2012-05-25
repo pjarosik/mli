@@ -1,0 +1,1206 @@
+Stan 75 konflikty: 1 przesunięcie/redukcja
+
+
+Gramatyka
+
+    0 $accept: lista_operacji $end
+
+    1 lista_operacji: lista_operacji operacja
+    2               | operacja
+
+    3 operacja: definicja_funkcji
+    4         | instrukcja
+
+    5 definicja_funkcji: "defn" "identyfikator" '(' lista_parametrow_formalnych ')' blok_instrukcji
+
+    6 lista_parametrow_formalnych: lista_identyfikatorow
+    7                            | /* pusta */
+
+    8 lista_identyfikatorow: lista_identyfikatorow ',' "identyfikator"
+    9                      | "identyfikator"
+
+   10 $@1: /* pusta */
+
+   11 blok_instrukcji: $@1 '{' lista_instrukcji '}'
+
+   12 lista_instrukcji: lista_instrukcji instrukcja
+   13                 | instrukcja
+
+   14 instrukcja: "identyfikator" "operator przypisania" wyrazenie ';'
+   15           | utworzenie_zmiennej
+   16           | instrukcja_warunkowa
+   17           | wywolanie_funkcji ';'
+   18           | instrukcja_petli
+
+   19 utworzenie_zmiennej: "val" "identyfikator" ';'
+   20                    | "val" "identyfikator" "operator przypisania" wyrazenie ';'
+
+   21 zmienna: "identyfikator"
+   22        | "identyfikator" '|' wyrazenie ',' wyrazenie '\\'
+
+   23 $@2: /* pusta */
+
+   24 macierz: '[' $@2 macierz_wyrazen ']'
+
+   25 macierz_wyrazen: macierz_wyrazen ';' argumenty
+   26                | argumenty
+
+   27 op_addytywny: "znak"
+   28             | "operator or"
+
+   29 wyrazenie: wyrazenie_arytmetyczne
+   30          | wyrazenie "operator relacji" wyrazenie_arytmetyczne
+
+   31 wyrazenie_arytmetyczne: skladnik
+   32                       | wyrazenie_arytmetyczne op_addytywny skladnik
+
+   33 skladnik: czynnik
+   34         | "znak" czynnik
+   35         | skladnik "operator multiplikatywny" czynnik
+
+   36 czynnik: "liczba"
+   37        | "liczba ulamkowa"
+   38        | macierz
+   39        | zmienna
+   40        | wywolanie_funkcji
+   41        | '(' wyrazenie ')'
+   42        | "not" czynnik
+
+   43 wywolanie_funkcji: "identyfikator" '(' argumenty ')'
+
+   44 $@3: /* pusta */
+
+   45 argumenty: $@3 lista_wyrazen
+   46          | /* pusta */
+
+   47 lista_wyrazen: lista_wyrazen ',' wyrazenie
+   48              | wyrazenie
+
+   49 instrukcja_warunkowa: "if" '(' wyrazenie ')' wynik_warunku
+   50                     | "if" '(' wyrazenie ')' wynik_warunku "else" wynik_warunku
+
+   51 instrukcja_petli: "while" '(' wyrazenie ')' wynik_warunku
+
+   52 wynik_warunku: blok_instrukcji
+   53              | instrukcja
+
+
+Symbole terminalne i reguły, w których występują
+
+$end (0) 0
+'(' (40) 5 41 43 49 50 51
+')' (41) 5 41 43 49 50 51
+',' (44) 8 22 47
+';' (59) 14 17 19 20 25
+'[' (91) 24
+'\\' (92) 22
+']' (93) 24
+'{' (123) 11
+'|' (124) 22
+'}' (125) 11
+error (256)
+"identyfikator" (258) 5 8 9 14 19 20 21 22 43
+"liczba" (259) 36
+"liczba ulamkowa" (260) 37
+"znak" (261) 27 34
+"operator multiplikatywny" (262) 35
+"operator relacji" (263) 30
+"operator przypisania" (264) 14 20
+"if" (265) 49 50
+"operator or" (266) 28
+"else" (267) 50
+"while" (268) 51
+"not" (269) 42
+"val" (270) 19 20
+"defn" (271) 5
+
+
+Symbole nieterminalne i reguły, w których występują
+
+$accept (27)
+    po lewej: 0
+lista_operacji (28)
+    po lewej: 1 2, po prawej: 0 1
+operacja (29)
+    po lewej: 3 4, po prawej: 1 2
+definicja_funkcji (30)
+    po lewej: 5, po prawej: 3
+lista_parametrow_formalnych (31)
+    po lewej: 6 7, po prawej: 5
+lista_identyfikatorow (32)
+    po lewej: 8 9, po prawej: 6 8
+blok_instrukcji (33)
+    po lewej: 11, po prawej: 5 52
+$@1 (34)
+    po lewej: 10, po prawej: 11
+lista_instrukcji (35)
+    po lewej: 12 13, po prawej: 11 12
+instrukcja (36)
+    po lewej: 14 15 16 17 18, po prawej: 4 12 13 53
+utworzenie_zmiennej (37)
+    po lewej: 19 20, po prawej: 15
+zmienna (38)
+    po lewej: 21 22, po prawej: 39
+macierz (39)
+    po lewej: 24, po prawej: 38
+$@2 (40)
+    po lewej: 23, po prawej: 24
+macierz_wyrazen (41)
+    po lewej: 25 26, po prawej: 24 25
+op_addytywny (42)
+    po lewej: 27 28, po prawej: 32
+wyrazenie (43)
+    po lewej: 29 30, po prawej: 14 20 22 30 41 47 48 49 50 51
+wyrazenie_arytmetyczne (44)
+    po lewej: 31 32, po prawej: 29 30 32
+skladnik (45)
+    po lewej: 33 34 35, po prawej: 31 32 35
+czynnik (46)
+    po lewej: 36 37 38 39 40 41 42, po prawej: 33 34 35 42
+wywolanie_funkcji (47)
+    po lewej: 43, po prawej: 17 40
+argumenty (48)
+    po lewej: 45 46, po prawej: 25 26 43
+$@3 (49)
+    po lewej: 44, po prawej: 45
+lista_wyrazen (50)
+    po lewej: 47 48, po prawej: 45 47
+instrukcja_warunkowa (51)
+    po lewej: 49 50, po prawej: 16
+instrukcja_petli (52)
+    po lewej: 51, po prawej: 18
+wynik_warunku (53)
+    po lewej: 52 53, po prawej: 49 50 51
+
+
+stan 0
+
+    0 $accept: . lista_operacji $end
+
+    "identyfikator"  przesunięcie, i przejście do stanu 1
+    "if"             przesunięcie, i przejście do stanu 2
+    "while"          przesunięcie, i przejście do stanu 3
+    "val"            przesunięcie, i przejście do stanu 4
+    "defn"           przesunięcie, i przejście do stanu 5
+
+    lista_operacji        przejście do stanu 6
+    operacja              przejście do stanu 7
+    definicja_funkcji     przejście do stanu 8
+    instrukcja            przejście do stanu 9
+    utworzenie_zmiennej   przejście do stanu 10
+    wywolanie_funkcji     przejście do stanu 11
+    instrukcja_warunkowa  przejście do stanu 12
+    instrukcja_petli      przejście do stanu 13
+
+
+stan 1
+
+   14 instrukcja: "identyfikator" . "operator przypisania" wyrazenie ';'
+   43 wywolanie_funkcji: "identyfikator" . '(' argumenty ')'
+
+    "operator przypisania"  przesunięcie, i przejście do stanu 14
+    '('                     przesunięcie, i przejście do stanu 15
+
+
+stan 2
+
+   49 instrukcja_warunkowa: "if" . '(' wyrazenie ')' wynik_warunku
+   50                     | "if" . '(' wyrazenie ')' wynik_warunku "else" wynik_warunku
+
+    '('  przesunięcie, i przejście do stanu 16
+
+
+stan 3
+
+   51 instrukcja_petli: "while" . '(' wyrazenie ')' wynik_warunku
+
+    '('  przesunięcie, i przejście do stanu 17
+
+
+stan 4
+
+   19 utworzenie_zmiennej: "val" . "identyfikator" ';'
+   20                    | "val" . "identyfikator" "operator przypisania" wyrazenie ';'
+
+    "identyfikator"  przesunięcie, i przejście do stanu 18
+
+
+stan 5
+
+    5 definicja_funkcji: "defn" . "identyfikator" '(' lista_parametrow_formalnych ')' blok_instrukcji
+
+    "identyfikator"  przesunięcie, i przejście do stanu 19
+
+
+stan 6
+
+    0 $accept: lista_operacji . $end
+    1 lista_operacji: lista_operacji . operacja
+
+    $end             przesunięcie, i przejście do stanu 20
+    "identyfikator"  przesunięcie, i przejście do stanu 1
+    "if"             przesunięcie, i przejście do stanu 2
+    "while"          przesunięcie, i przejście do stanu 3
+    "val"            przesunięcie, i przejście do stanu 4
+    "defn"           przesunięcie, i przejście do stanu 5
+
+    operacja              przejście do stanu 21
+    definicja_funkcji     przejście do stanu 8
+    instrukcja            przejście do stanu 9
+    utworzenie_zmiennej   przejście do stanu 10
+    wywolanie_funkcji     przejście do stanu 11
+    instrukcja_warunkowa  przejście do stanu 12
+    instrukcja_petli      przejście do stanu 13
+
+
+stan 7
+
+    2 lista_operacji: operacja .
+
+    $domyślnie  redukcja przy użyciu reguły 2 (lista_operacji)
+
+
+stan 8
+
+    3 operacja: definicja_funkcji .
+
+    $domyślnie  redukcja przy użyciu reguły 3 (operacja)
+
+
+stan 9
+
+    4 operacja: instrukcja .
+
+    $domyślnie  redukcja przy użyciu reguły 4 (operacja)
+
+
+stan 10
+
+   15 instrukcja: utworzenie_zmiennej .
+
+    $domyślnie  redukcja przy użyciu reguły 15 (instrukcja)
+
+
+stan 11
+
+   17 instrukcja: wywolanie_funkcji . ';'
+
+    ';'  przesunięcie, i przejście do stanu 22
+
+
+stan 12
+
+   16 instrukcja: instrukcja_warunkowa .
+
+    $domyślnie  redukcja przy użyciu reguły 16 (instrukcja)
+
+
+stan 13
+
+   18 instrukcja: instrukcja_petli .
+
+    $domyślnie  redukcja przy użyciu reguły 18 (instrukcja)
+
+
+stan 14
+
+   14 instrukcja: "identyfikator" "operator przypisania" . wyrazenie ';'
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 32
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 15
+
+   43 wywolanie_funkcji: "identyfikator" '(' . argumenty ')'
+
+    ')'          redukcja przy użyciu reguły 46 (argumenty)
+    $domyślnie  redukcja przy użyciu reguły 44 ($@3)
+
+    argumenty  przejście do stanu 37
+    $@3        przejście do stanu 38
+
+
+stan 16
+
+   49 instrukcja_warunkowa: "if" '(' . wyrazenie ')' wynik_warunku
+   50                     | "if" '(' . wyrazenie ')' wynik_warunku "else" wynik_warunku
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 39
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 17
+
+   51 instrukcja_petli: "while" '(' . wyrazenie ')' wynik_warunku
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 40
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 18
+
+   19 utworzenie_zmiennej: "val" "identyfikator" . ';'
+   20                    | "val" "identyfikator" . "operator przypisania" wyrazenie ';'
+
+    "operator przypisania"  przesunięcie, i przejście do stanu 41
+    ';'                     przesunięcie, i przejście do stanu 42
+
+
+stan 19
+
+    5 definicja_funkcji: "defn" "identyfikator" . '(' lista_parametrow_formalnych ')' blok_instrukcji
+
+    '('  przesunięcie, i przejście do stanu 43
+
+
+stan 20
+
+    0 $accept: lista_operacji $end .
+
+    $domyślnie  akceptowanie
+
+
+stan 21
+
+    1 lista_operacji: lista_operacji operacja .
+
+    $domyślnie  redukcja przy użyciu reguły 1 (lista_operacji)
+
+
+stan 22
+
+   17 instrukcja: wywolanie_funkcji ';' .
+
+    $domyślnie  redukcja przy użyciu reguły 17 (instrukcja)
+
+
+stan 23
+
+   21 zmienna: "identyfikator" .
+   22        | "identyfikator" . '|' wyrazenie ',' wyrazenie '\\'
+   43 wywolanie_funkcji: "identyfikator" . '(' argumenty ')'
+
+    '('  przesunięcie, i przejście do stanu 15
+    '|'  przesunięcie, i przejście do stanu 44
+
+    $domyślnie  redukcja przy użyciu reguły 21 (zmienna)
+
+
+stan 24
+
+   36 czynnik: "liczba" .
+
+    $domyślnie  redukcja przy użyciu reguły 36 (czynnik)
+
+
+stan 25
+
+   37 czynnik: "liczba ulamkowa" .
+
+    $domyślnie  redukcja przy użyciu reguły 37 (czynnik)
+
+
+stan 26
+
+   34 skladnik: "znak" . czynnik
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna            przejście do stanu 30
+    macierz            przejście do stanu 31
+    czynnik            przejście do stanu 45
+    wywolanie_funkcji  przejście do stanu 36
+
+
+stan 27
+
+   42 czynnik: "not" . czynnik
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna            przejście do stanu 30
+    macierz            przejście do stanu 31
+    czynnik            przejście do stanu 46
+    wywolanie_funkcji  przejście do stanu 36
+
+
+stan 28
+
+   41 czynnik: '(' . wyrazenie ')'
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 47
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 29
+
+   24 macierz: '[' . $@2 macierz_wyrazen ']'
+
+    $domyślnie  redukcja przy użyciu reguły 23 ($@2)
+
+    $@2  przejście do stanu 48
+
+
+stan 30
+
+   39 czynnik: zmienna .
+
+    $domyślnie  redukcja przy użyciu reguły 39 (czynnik)
+
+
+stan 31
+
+   38 czynnik: macierz .
+
+    $domyślnie  redukcja przy użyciu reguły 38 (czynnik)
+
+
+stan 32
+
+   14 instrukcja: "identyfikator" "operator przypisania" wyrazenie . ';'
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+    ';'                 przesunięcie, i przejście do stanu 50
+
+
+stan 33
+
+   29 wyrazenie: wyrazenie_arytmetyczne .
+   32 wyrazenie_arytmetyczne: wyrazenie_arytmetyczne . op_addytywny skladnik
+
+    "znak"         przesunięcie, i przejście do stanu 51
+    "operator or"  przesunięcie, i przejście do stanu 52
+
+    $domyślnie  redukcja przy użyciu reguły 29 (wyrazenie)
+
+    op_addytywny  przejście do stanu 53
+
+
+stan 34
+
+   31 wyrazenie_arytmetyczne: skladnik .
+   35 skladnik: skladnik . "operator multiplikatywny" czynnik
+
+    "operator multiplikatywny"  przesunięcie, i przejście do stanu 54
+
+    $domyślnie  redukcja przy użyciu reguły 31 (wyrazenie_arytmetyczne)
+
+
+stan 35
+
+   33 skladnik: czynnik .
+
+    $domyślnie  redukcja przy użyciu reguły 33 (skladnik)
+
+
+stan 36
+
+   40 czynnik: wywolanie_funkcji .
+
+    $domyślnie  redukcja przy użyciu reguły 40 (czynnik)
+
+
+stan 37
+
+   43 wywolanie_funkcji: "identyfikator" '(' argumenty . ')'
+
+    ')'  przesunięcie, i przejście do stanu 55
+
+
+stan 38
+
+   45 argumenty: $@3 . lista_wyrazen
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 56
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+    lista_wyrazen           przejście do stanu 57
+
+
+stan 39
+
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+   49 instrukcja_warunkowa: "if" '(' wyrazenie . ')' wynik_warunku
+   50                     | "if" '(' wyrazenie . ')' wynik_warunku "else" wynik_warunku
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+    ')'                 przesunięcie, i przejście do stanu 58
+
+
+stan 40
+
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+   51 instrukcja_petli: "while" '(' wyrazenie . ')' wynik_warunku
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+    ')'                 przesunięcie, i przejście do stanu 59
+
+
+stan 41
+
+   20 utworzenie_zmiennej: "val" "identyfikator" "operator przypisania" . wyrazenie ';'
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 60
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 42
+
+   19 utworzenie_zmiennej: "val" "identyfikator" ';' .
+
+    $domyślnie  redukcja przy użyciu reguły 19 (utworzenie_zmiennej)
+
+
+stan 43
+
+    5 definicja_funkcji: "defn" "identyfikator" '(' . lista_parametrow_formalnych ')' blok_instrukcji
+
+    "identyfikator"  przesunięcie, i przejście do stanu 61
+
+    $domyślnie  redukcja przy użyciu reguły 7 (lista_parametrow_formalnych)
+
+    lista_parametrow_formalnych  przejście do stanu 62
+    lista_identyfikatorow        przejście do stanu 63
+
+
+stan 44
+
+   22 zmienna: "identyfikator" '|' . wyrazenie ',' wyrazenie '\\'
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 64
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 45
+
+   34 skladnik: "znak" czynnik .
+
+    $domyślnie  redukcja przy użyciu reguły 34 (skladnik)
+
+
+stan 46
+
+   42 czynnik: "not" czynnik .
+
+    $domyślnie  redukcja przy użyciu reguły 42 (czynnik)
+
+
+stan 47
+
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+   41 czynnik: '(' wyrazenie . ')'
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+    ')'                 przesunięcie, i przejście do stanu 65
+
+
+stan 48
+
+   24 macierz: '[' $@2 . macierz_wyrazen ']'
+
+    ';'          redukcja przy użyciu reguły 46 (argumenty)
+    ']'          redukcja przy użyciu reguły 46 (argumenty)
+    $domyślnie  redukcja przy użyciu reguły 44 ($@3)
+
+    macierz_wyrazen  przejście do stanu 66
+    argumenty        przejście do stanu 67
+    $@3              przejście do stanu 38
+
+
+stan 49
+
+   30 wyrazenie: wyrazenie "operator relacji" . wyrazenie_arytmetyczne
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie_arytmetyczne  przejście do stanu 68
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 50
+
+   14 instrukcja: "identyfikator" "operator przypisania" wyrazenie ';' .
+
+    $domyślnie  redukcja przy użyciu reguły 14 (instrukcja)
+
+
+stan 51
+
+   27 op_addytywny: "znak" .
+
+    $domyślnie  redukcja przy użyciu reguły 27 (op_addytywny)
+
+
+stan 52
+
+   28 op_addytywny: "operator or" .
+
+    $domyślnie  redukcja przy użyciu reguły 28 (op_addytywny)
+
+
+stan 53
+
+   32 wyrazenie_arytmetyczne: wyrazenie_arytmetyczne op_addytywny . skladnik
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna            przejście do stanu 30
+    macierz            przejście do stanu 31
+    skladnik           przejście do stanu 69
+    czynnik            przejście do stanu 35
+    wywolanie_funkcji  przejście do stanu 36
+
+
+stan 54
+
+   35 skladnik: skladnik "operator multiplikatywny" . czynnik
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna            przejście do stanu 30
+    macierz            przejście do stanu 31
+    czynnik            przejście do stanu 70
+    wywolanie_funkcji  przejście do stanu 36
+
+
+stan 55
+
+   43 wywolanie_funkcji: "identyfikator" '(' argumenty ')' .
+
+    $domyślnie  redukcja przy użyciu reguły 43 (wywolanie_funkcji)
+
+
+stan 56
+
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+   48 lista_wyrazen: wyrazenie .
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+
+    $domyślnie  redukcja przy użyciu reguły 48 (lista_wyrazen)
+
+
+stan 57
+
+   45 argumenty: $@3 lista_wyrazen .
+   47 lista_wyrazen: lista_wyrazen . ',' wyrazenie
+
+    ','  przesunięcie, i przejście do stanu 71
+
+    $domyślnie  redukcja przy użyciu reguły 45 (argumenty)
+
+
+stan 58
+
+   49 instrukcja_warunkowa: "if" '(' wyrazenie ')' . wynik_warunku
+   50                     | "if" '(' wyrazenie ')' . wynik_warunku "else" wynik_warunku
+
+    "identyfikator"  przesunięcie, i przejście do stanu 1
+    "if"             przesunięcie, i przejście do stanu 2
+    "while"          przesunięcie, i przejście do stanu 3
+    "val"            przesunięcie, i przejście do stanu 4
+
+    $domyślnie  redukcja przy użyciu reguły 10 ($@1)
+
+    blok_instrukcji       przejście do stanu 72
+    $@1                   przejście do stanu 73
+    instrukcja            przejście do stanu 74
+    utworzenie_zmiennej   przejście do stanu 10
+    wywolanie_funkcji     przejście do stanu 11
+    instrukcja_warunkowa  przejście do stanu 12
+    instrukcja_petli      przejście do stanu 13
+    wynik_warunku         przejście do stanu 75
+
+
+stan 59
+
+   51 instrukcja_petli: "while" '(' wyrazenie ')' . wynik_warunku
+
+    "identyfikator"  przesunięcie, i przejście do stanu 1
+    "if"             przesunięcie, i przejście do stanu 2
+    "while"          przesunięcie, i przejście do stanu 3
+    "val"            przesunięcie, i przejście do stanu 4
+
+    $domyślnie  redukcja przy użyciu reguły 10 ($@1)
+
+    blok_instrukcji       przejście do stanu 72
+    $@1                   przejście do stanu 73
+    instrukcja            przejście do stanu 74
+    utworzenie_zmiennej   przejście do stanu 10
+    wywolanie_funkcji     przejście do stanu 11
+    instrukcja_warunkowa  przejście do stanu 12
+    instrukcja_petli      przejście do stanu 13
+    wynik_warunku         przejście do stanu 76
+
+
+stan 60
+
+   20 utworzenie_zmiennej: "val" "identyfikator" "operator przypisania" wyrazenie . ';'
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+    ';'                 przesunięcie, i przejście do stanu 77
+
+
+stan 61
+
+    9 lista_identyfikatorow: "identyfikator" .
+
+    $domyślnie  redukcja przy użyciu reguły 9 (lista_identyfikatorow)
+
+
+stan 62
+
+    5 definicja_funkcji: "defn" "identyfikator" '(' lista_parametrow_formalnych . ')' blok_instrukcji
+
+    ')'  przesunięcie, i przejście do stanu 78
+
+
+stan 63
+
+    6 lista_parametrow_formalnych: lista_identyfikatorow .
+    8 lista_identyfikatorow: lista_identyfikatorow . ',' "identyfikator"
+
+    ','  przesunięcie, i przejście do stanu 79
+
+    $domyślnie  redukcja przy użyciu reguły 6 (lista_parametrow_formalnych)
+
+
+stan 64
+
+   22 zmienna: "identyfikator" '|' wyrazenie . ',' wyrazenie '\\'
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+    ','                 przesunięcie, i przejście do stanu 80
+
+
+stan 65
+
+   41 czynnik: '(' wyrazenie ')' .
+
+    $domyślnie  redukcja przy użyciu reguły 41 (czynnik)
+
+
+stan 66
+
+   24 macierz: '[' $@2 macierz_wyrazen . ']'
+   25 macierz_wyrazen: macierz_wyrazen . ';' argumenty
+
+    ';'  przesunięcie, i przejście do stanu 81
+    ']'  przesunięcie, i przejście do stanu 82
+
+
+stan 67
+
+   26 macierz_wyrazen: argumenty .
+
+    $domyślnie  redukcja przy użyciu reguły 26 (macierz_wyrazen)
+
+
+stan 68
+
+   30 wyrazenie: wyrazenie "operator relacji" wyrazenie_arytmetyczne .
+   32 wyrazenie_arytmetyczne: wyrazenie_arytmetyczne . op_addytywny skladnik
+
+    "znak"         przesunięcie, i przejście do stanu 51
+    "operator or"  przesunięcie, i przejście do stanu 52
+
+    $domyślnie  redukcja przy użyciu reguły 30 (wyrazenie)
+
+    op_addytywny  przejście do stanu 53
+
+
+stan 69
+
+   32 wyrazenie_arytmetyczne: wyrazenie_arytmetyczne op_addytywny skladnik .
+   35 skladnik: skladnik . "operator multiplikatywny" czynnik
+
+    "operator multiplikatywny"  przesunięcie, i przejście do stanu 54
+
+    $domyślnie  redukcja przy użyciu reguły 32 (wyrazenie_arytmetyczne)
+
+
+stan 70
+
+   35 skladnik: skladnik "operator multiplikatywny" czynnik .
+
+    $domyślnie  redukcja przy użyciu reguły 35 (skladnik)
+
+
+stan 71
+
+   47 lista_wyrazen: lista_wyrazen ',' . wyrazenie
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 83
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 72
+
+   52 wynik_warunku: blok_instrukcji .
+
+    $domyślnie  redukcja przy użyciu reguły 52 (wynik_warunku)
+
+
+stan 73
+
+   11 blok_instrukcji: $@1 . '{' lista_instrukcji '}'
+
+    '{'  przesunięcie, i przejście do stanu 84
+
+
+stan 74
+
+   53 wynik_warunku: instrukcja .
+
+    $domyślnie  redukcja przy użyciu reguły 53 (wynik_warunku)
+
+
+stan 75
+
+   49 instrukcja_warunkowa: "if" '(' wyrazenie ')' wynik_warunku .
+   50                     | "if" '(' wyrazenie ')' wynik_warunku . "else" wynik_warunku
+
+    "else"  przesunięcie, i przejście do stanu 85
+
+    "else"       [redukcja przy użyciu reguły 49 (instrukcja_warunkowa)]
+    $domyślnie  redukcja przy użyciu reguły 49 (instrukcja_warunkowa)
+
+
+stan 76
+
+   51 instrukcja_petli: "while" '(' wyrazenie ')' wynik_warunku .
+
+    $domyślnie  redukcja przy użyciu reguły 51 (instrukcja_petli)
+
+
+stan 77
+
+   20 utworzenie_zmiennej: "val" "identyfikator" "operator przypisania" wyrazenie ';' .
+
+    $domyślnie  redukcja przy użyciu reguły 20 (utworzenie_zmiennej)
+
+
+stan 78
+
+    5 definicja_funkcji: "defn" "identyfikator" '(' lista_parametrow_formalnych ')' . blok_instrukcji
+
+    $domyślnie  redukcja przy użyciu reguły 10 ($@1)
+
+    blok_instrukcji  przejście do stanu 86
+    $@1              przejście do stanu 73
+
+
+stan 79
+
+    8 lista_identyfikatorow: lista_identyfikatorow ',' . "identyfikator"
+
+    "identyfikator"  przesunięcie, i przejście do stanu 87
+
+
+stan 80
+
+   22 zmienna: "identyfikator" '|' wyrazenie ',' . wyrazenie '\\'
+
+    "identyfikator"    przesunięcie, i przejście do stanu 23
+    "liczba"           przesunięcie, i przejście do stanu 24
+    "liczba ulamkowa"  przesunięcie, i przejście do stanu 25
+    "znak"             przesunięcie, i przejście do stanu 26
+    "not"              przesunięcie, i przejście do stanu 27
+    '('                przesunięcie, i przejście do stanu 28
+    '['                przesunięcie, i przejście do stanu 29
+
+    zmienna                 przejście do stanu 30
+    macierz                 przejście do stanu 31
+    wyrazenie               przejście do stanu 88
+    wyrazenie_arytmetyczne  przejście do stanu 33
+    skladnik                przejście do stanu 34
+    czynnik                 przejście do stanu 35
+    wywolanie_funkcji       przejście do stanu 36
+
+
+stan 81
+
+   25 macierz_wyrazen: macierz_wyrazen ';' . argumenty
+
+    ';'          redukcja przy użyciu reguły 46 (argumenty)
+    ']'          redukcja przy użyciu reguły 46 (argumenty)
+    $domyślnie  redukcja przy użyciu reguły 44 ($@3)
+
+    argumenty  przejście do stanu 89
+    $@3        przejście do stanu 38
+
+
+stan 82
+
+   24 macierz: '[' $@2 macierz_wyrazen ']' .
+
+    $domyślnie  redukcja przy użyciu reguły 24 (macierz)
+
+
+stan 83
+
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+   47 lista_wyrazen: lista_wyrazen ',' wyrazenie .
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+
+    $domyślnie  redukcja przy użyciu reguły 47 (lista_wyrazen)
+
+
+stan 84
+
+   11 blok_instrukcji: $@1 '{' . lista_instrukcji '}'
+
+    "identyfikator"  przesunięcie, i przejście do stanu 1
+    "if"             przesunięcie, i przejście do stanu 2
+    "while"          przesunięcie, i przejście do stanu 3
+    "val"            przesunięcie, i przejście do stanu 4
+
+    lista_instrukcji      przejście do stanu 90
+    instrukcja            przejście do stanu 91
+    utworzenie_zmiennej   przejście do stanu 10
+    wywolanie_funkcji     przejście do stanu 11
+    instrukcja_warunkowa  przejście do stanu 12
+    instrukcja_petli      przejście do stanu 13
+
+
+stan 85
+
+   50 instrukcja_warunkowa: "if" '(' wyrazenie ')' wynik_warunku "else" . wynik_warunku
+
+    "identyfikator"  przesunięcie, i przejście do stanu 1
+    "if"             przesunięcie, i przejście do stanu 2
+    "while"          przesunięcie, i przejście do stanu 3
+    "val"            przesunięcie, i przejście do stanu 4
+
+    $domyślnie  redukcja przy użyciu reguły 10 ($@1)
+
+    blok_instrukcji       przejście do stanu 72
+    $@1                   przejście do stanu 73
+    instrukcja            przejście do stanu 74
+    utworzenie_zmiennej   przejście do stanu 10
+    wywolanie_funkcji     przejście do stanu 11
+    instrukcja_warunkowa  przejście do stanu 12
+    instrukcja_petli      przejście do stanu 13
+    wynik_warunku         przejście do stanu 92
+
+
+stan 86
+
+    5 definicja_funkcji: "defn" "identyfikator" '(' lista_parametrow_formalnych ')' blok_instrukcji .
+
+    $domyślnie  redukcja przy użyciu reguły 5 (definicja_funkcji)
+
+
+stan 87
+
+    8 lista_identyfikatorow: lista_identyfikatorow ',' "identyfikator" .
+
+    $domyślnie  redukcja przy użyciu reguły 8 (lista_identyfikatorow)
+
+
+stan 88
+
+   22 zmienna: "identyfikator" '|' wyrazenie ',' wyrazenie . '\\'
+   30 wyrazenie: wyrazenie . "operator relacji" wyrazenie_arytmetyczne
+
+    "operator relacji"  przesunięcie, i przejście do stanu 49
+    '\\'                przesunięcie, i przejście do stanu 93
+
+
+stan 89
+
+   25 macierz_wyrazen: macierz_wyrazen ';' argumenty .
+
+    $domyślnie  redukcja przy użyciu reguły 25 (macierz_wyrazen)
+
+
+stan 90
+
+   11 blok_instrukcji: $@1 '{' lista_instrukcji . '}'
+   12 lista_instrukcji: lista_instrukcji . instrukcja
+
+    "identyfikator"  przesunięcie, i przejście do stanu 1
+    "if"             przesunięcie, i przejście do stanu 2
+    "while"          przesunięcie, i przejście do stanu 3
+    "val"            przesunięcie, i przejście do stanu 4
+    '}'              przesunięcie, i przejście do stanu 94
+
+    instrukcja            przejście do stanu 95
+    utworzenie_zmiennej   przejście do stanu 10
+    wywolanie_funkcji     przejście do stanu 11
+    instrukcja_warunkowa  przejście do stanu 12
+    instrukcja_petli      przejście do stanu 13
+
+
+stan 91
+
+   13 lista_instrukcji: instrukcja .
+
+    $domyślnie  redukcja przy użyciu reguły 13 (lista_instrukcji)
+
+
+stan 92
+
+   50 instrukcja_warunkowa: "if" '(' wyrazenie ')' wynik_warunku "else" wynik_warunku .
+
+    $domyślnie  redukcja przy użyciu reguły 50 (instrukcja_warunkowa)
+
+
+stan 93
+
+   22 zmienna: "identyfikator" '|' wyrazenie ',' wyrazenie '\\' .
+
+    $domyślnie  redukcja przy użyciu reguły 22 (zmienna)
+
+
+stan 94
+
+   11 blok_instrukcji: $@1 '{' lista_instrukcji '}' .
+
+    $domyślnie  redukcja przy użyciu reguły 11 (blok_instrukcji)
+
+
+stan 95
+
+   12 lista_instrukcji: lista_instrukcji instrukcja .
+
+    $domyślnie  redukcja przy użyciu reguły 12 (lista_instrukcji)
