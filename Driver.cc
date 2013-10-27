@@ -11,7 +11,6 @@
 #include "environment/EnvironmentImpl.h"
 
 #include <iostream>
-// to jest drugi komentarz
 
 namespace matryca
 {
